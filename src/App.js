@@ -2,6 +2,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Person from './Person/Person';
+// import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 
 class App extends Component {
   state = {
@@ -60,26 +61,36 @@ class App extends Component {
           {
             this.state.persons.map((person, index) => {
               return <Person 
-                        click={() => this.deletePersonHandler(index)}
-                        name={person.name} 
-                        age={person.age} 
-                        key={person._id}
-                        changed={(even) => this.nameChangedHandler(even, person._id)}
+                          click={() => this.deletePersonHandler(index)}
+                          key={person._id}
+                          name={person.name} 
+                          age={person.age}
+                          changed={(even) => this.nameChangedHandler(even, person._id)}
                         />
             })
           }  
         </div>
       );
-      style.backgroundColor = 'red'
+      style.backgroundColor = 'red';
+      
     } else {
       // In this case the else statement is not required 
       persons = null;
     }
 
+    let classes = [];
+    if(this.state.persons.length < 3){
+      classes.push('red');
+    } 
+    if(this.state.persons.length < 2){
+      classes.push('bold');
+    }
+
+
     return (
       <div className="App">
         <h1>Hi, I'm a React App</h1>
-        <p>This is really working!</p>
+        <p className={classes.join(' ')}>This is really working!</p>
         <button 
           style={style}
           onClick={this.togglePersonHandler}>Toggle Person</button>
