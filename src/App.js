@@ -6,24 +6,19 @@ import Person from './Person/Person';
 class App extends Component {
   state = {
     persons: [
-      { name: 'Max', age: 28 },
-      { name: 'Manu', age: 29 },
-      { name: 'Stephanie', age: 26 }
+      { _id:"6154", name: 'Max', age: 28 },
+      { _id:"6164", name: 'Manu', age: 29 },
+      { _id:"6148", name: 'Stephanie', age: 26 }
     ],
     otherState: 'some other value',
     showPersons: false
   }
 
-  switchNameHandler = (newName) => {
-    // console.log('Was clicked!');
-    // DON'T DO THIS: this.state.persons[0].name = 'Maximilian';
-    this.setState( {
-      persons: [
-        { name: newName, age: 28 },
-        { name: 'Manu', age: 29 },
-        { name: 'Stephanie', age: 27 }
-      ]
-    } )
+  deletePersonHandler = (personIndex) => {
+    // const persons = this.state.persons;
+    const persons = [...this.state.persons];
+    persons.splice(personIndex, 1);
+    this.setState({persons: persons});
   }
 
   togglePersonHandler = () => {
@@ -31,43 +26,51 @@ class App extends Component {
     this.setState({showPersons: !doesShow});
   }
 
-  nameChangedHandler = (event) => {
-    this.setState( {
-      persons: [
-        { name: 'Max', age: 28 },
-        { name: event.target.value, age: 29 },
-        { name: 'Stephanie', age: 26 }
-      ]
-    } )
+  // Here we need to have the id of the person who wants to make changes
+  nameChangedHandler = ( even, _id ) => {
+
+    const personIndex = this.state.persons.findIndex( (p) => { return p._id === _id; });
+
+    const person = {...this.state.persons[personIndex]}
+
+    person.name = even.target.value;
+
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
+
+    this.setState({persons: persons});
+
   }
 
   render () {
     const style = {
-      backgroundColor: 'white',
+      backgroundColor: 'green',
+      color: 'white',
       font: 'inherit',
       border: '1px solid blue',
       padding: '8px',
       cursor: 'pointer'
     };
 
-    let persons = null;
+    let persons;
 
     if(this.state.showPersons === true) {
       persons = (
-        <div className="persons">
-            <Person 
-              name={this.state.persons[0].name} 
-              age={this.state.persons[0].age} />
-            <Person 
-              name={this.state.persons[1].name} 
-              age={this.state.persons[1].age}
-              click={this.switchNameHandler.bind(this, 'Max!')}
-              changed={this.nameChangedHandler} >My Hobbies: Racing</Person>
-            <Person 
-              name={this.state.persons[2].name} 
-              age={this.state.persons[2].age} />
+        <div>
+          {
+            this.state.persons.map((person, index) => {
+              return <Person 
+                        click={() => this.deletePersonHandler(index)}
+                        name={person.name} 
+                        age={person.age} 
+                        key={person._id}
+                        changed={(even) => this.nameChangedHandler(even, person._id)}
+                        />
+            })
+          }  
         </div>
-      )
+      );
+      style.backgroundColor = 'red'
     } else {
       // In this case the else statement is not required 
       persons = null;
